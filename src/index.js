@@ -76,19 +76,19 @@ function updateScale(map, metricContainer, imperialContainer, options) {
     // container with maximum length (Default) as 100px.
     // Using spherical law of cosines approximation, the real distance is
     // found between the two coordinates.
-    const maxWidth = options && options.maxWidth || 100;
+    var maxWidth = options && options.maxWidth || 100;
 
-    const y = map._container.clientHeight / 2;
-    const maxMeters = getDistance(map.unproject([0, y]), map.unproject([maxWidth, y]));
+    var y = map._container.clientHeight / 2;
+    var maxMeters = getDistance(map.unproject([0, y]), map.unproject([maxWidth, y]));
     // The real distance corresponding to 100px scale length is rounded off to
     // near pretty number and the scale length for the same is found out.
     // Default unit of the scale is based on User's locale.
-     const maxFeet = 3.2808 * maxMeters;
-    if (maxFeet > 5280) {
-      const maxMiles = maxFeet / 5280;
-      setScale(imperialContainer, maxWidth, maxMiles, 'mi');
+    var maxYards = 1.09361 * maxMeters;
+    if (maxYards > 440) {
+        var maxMiles = maxYards / 1760;
+        setScale(imperialContainer, maxWidth, maxMiles, 'mi');
     } else {
-      setScale(imperialContainer, maxWidth, maxFeet, 'ft');
+        setScale(imperialContainer, maxWidth, maxYards, 'yd');
     }
     setScale(metricContainer, maxWidth, maxMeters, 'm');
 
@@ -123,13 +123,15 @@ function getDistance(latlng1, latlng2) {
 }
 
 function getRoundNum(num) {
-    const pow10 = Math.pow(10, (`${Math.floor(num)}`).length - 1);
-    let d = num / pow10;
+    var pow10 = Math.pow(10, (("" + (Math.floor(num)))).length - 1);
+    var d = num / pow10;
 
     d = d >= 10 ? 10 :
         d >= 5 ? 5 :
-        d >= 3 ? 3 :
-        d >= 2 ? 2 : 1;
+            d >= 3 ? 3 :
+                d >= 2 ? 2 :
+                    d >= 1 ? 1 :
+                        d >= 0.5 ? 0.5 : 0.25;
 
     return pow10 * d;
 }
